@@ -1,0 +1,74 @@
+[
+    {
+        "id": 590,
+        "clientId": 14,
+        "productId": 540,
+        "salerId": 4,
+        "date": "2025-03-22T11:10:21.000Z",
+        "value": 16.95,
+        "Client": {
+            "id": 14,
+            "firstName": "James",
+            "lastName": "Torres",
+            "email": "j.torres@ymail.com",
+            "birthDate": "2008-01-05"
+        },
+        "Saler": {
+            "id": 4,
+            "firstName": "Stephen",
+            "lastName": "Flores",
+            "Goal": {
+                "year": 2025,
+                "month": 3,
+                "salerId": 4,
+                "totalGoal": 1311
+            }
+        },
+        "Product": {
+            "id": 304,
+            "name": "Technology Attachment",
+            "price": 107.99,
+            "categoryId": 10,
+            "Category": {
+                "id": 10,
+                "name": "Pets"
+            }
+        }
+    },
+    {
+        "id": 589,
+        "clientId": 14,
+        "productId": 540,
+        "salerId": 4,
+        "date": "2025-03-22T11:10:21.000Z",
+        "value": 16.95,
+        "Client": {
+            "id": 14,
+            "firstName": "James",
+            "lastName": "Torres",
+            "email": "j.torres@ymail.com",
+            "birthDate": "2008-01-05"
+        },
+        "Saler": {
+            "id": 4,
+            "firstName": "Stephen",
+            "lastName": "Flores",
+            "Goal": {
+                "year": 2025,
+                "month": 3,
+                "salerId": 4,
+                "totalGoal": 1311
+            }
+        },
+        "Product": {
+            "id": 304,
+            "name": "Technology Attachment",
+            "price": 107.99,
+            "categoryId": 10,
+            "Category": {
+                "id": 10,
+                "name": "Pets"
+            }
+        }
+    }
+]

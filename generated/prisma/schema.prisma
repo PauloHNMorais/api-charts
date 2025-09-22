@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id              Int     @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  email           String
+  birthDate       String
+  profilePhotoURL String?
+  Sale            Sale[]
+}
+
+model Saler {
+  id              Int     @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  profilePhotoURL String?
+  Goal            Goal[]
+  Sale            Sale[]
+}
+
+model Product {
+  id         Int       @id @default(autoincrement())
+  name       String
+  price      Float
+  categoryId Int?
+  Category   Category? @relation(fields: [categoryId], references: [id])
+  Sale       Sale[]
+}
+
+model Category {
+  id      Int       @id @default(autoincrement())
+  name    String
+  Product Product[]
+}
+
+model Sale {
+  id        Int      @id @default(autoincrement())
+  clientId  Int
+  productId Int
+  salerId   Int
+  date      DateTime
+  value     Float
+  rating    Int?
+  Client    Client   @relation(fields: [clientId], references: [id])
+  Product   Product  @relation(fields: [productId], references: [id])
+  Saler     Saler    @relation(fields: [salerId], references: [id])
+}
+
+model Goal {
+  year      Int
+  month     Int
+  salerId   Int
+  totalGoal Float
+  Saler     Saler @relation(fields: [salerId], references: [id])
+
+  @@id([year, month, salerId])
+}
