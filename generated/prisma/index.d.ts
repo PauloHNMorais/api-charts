@@ -60,7 +60,7 @@ export type Goal = $Result.DefaultSelection<Prisma.$GoalPayload>
  */
 export class PrismaClient<
   ClientOptions extends Prisma.PrismaClientOptions = Prisma.PrismaClientOptions,
-  U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
+  const U = 'log' extends keyof ClientOptions ? ClientOptions['log'] extends Array<Prisma.LogLevel | Prisma.LogDefinition> ? Prisma.GetEvents<ClientOptions['log']> : never : never,
   ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs
 > {
   [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['other'] }
@@ -92,13 +92,6 @@ export class PrismaClient<
    * Disconnect from the database
    */
   $disconnect(): $Utils.JsPromise<void>;
-
-  /**
-   * Add a middleware
-   * @deprecated since 4.16.0. For new code, prefer client extensions instead.
-   * @see https://pris.ly/d/extensions
-   */
-  $use(cb: Prisma.Middleware): void
 
 /**
    * Executes a prepared raw query and returns the number of affected rows.
@@ -286,8 +279,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 6.5.0
-   * Query Engine version: 173f8d54f8d52e692c7e27e72a88314ec7aeff60
+   * Prisma Client JS version: 6.16.2
+   * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
    */
   export type PrismaVersion = {
     client: string
@@ -1183,16 +1176,24 @@ export namespace Prisma {
     /**
      * @example
      * ```
-     * // Defaults to stdout
+     * // Shorthand for `emit: 'stdout'`
      * log: ['query', 'info', 'warn', 'error']
      * 
-     * // Emit as events
+     * // Emit as events only
      * log: [
-     *   { emit: 'stdout', level: 'query' },
-     *   { emit: 'stdout', level: 'info' },
-     *   { emit: 'stdout', level: 'warn' }
-     *   { emit: 'stdout', level: 'error' }
+     *   { emit: 'event', level: 'query' },
+     *   { emit: 'event', level: 'info' },
+     *   { emit: 'event', level: 'warn' }
+     *   { emit: 'event', level: 'error' }
      * ]
+     * 
+     * / Emit as events and log to stdout
+     * og: [
+     *  { emit: 'stdout', level: 'query' },
+     *  { emit: 'stdout', level: 'info' },
+     *  { emit: 'stdout', level: 'warn' }
+     *  { emit: 'stdout', level: 'error' }
+     * 
      * ```
      * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/logging#the-log-option).
      */
@@ -1207,6 +1208,10 @@ export namespace Prisma {
       timeout?: number
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
+    /**
+     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     */
+    adapter?: runtime.SqlDriverAdapterFactory | null
     /**
      * Global configuration for omitting model fields by default.
      * 
@@ -1239,10 +1244,15 @@ export namespace Prisma {
     emit: 'stdout' | 'event'
   }
 
-  export type GetLogType<T extends LogLevel | LogDefinition> = T extends LogDefinition ? T['emit'] extends 'event' ? T['level'] : never : never
-  export type GetEvents<T extends any> = T extends Array<LogLevel | LogDefinition> ?
-    GetLogType<T[0]> | GetLogType<T[1]> | GetLogType<T[2]> | GetLogType<T[3]>
-    : never
+  export type CheckIsLogLevel<T> = T extends LogLevel ? T : never;
+
+  export type GetLogType<T> = CheckIsLogLevel<
+    T extends LogDefinition ? T['level'] : T
+  >;
+
+  export type GetEvents<T extends any[]> = T extends Array<LogLevel | LogDefinition>
+    ? GetLogType<T[number]>
+    : never;
 
   export type QueryEvent = {
     timestamp: Date
@@ -1282,25 +1292,6 @@ export namespace Prisma {
     | 'runCommandRaw'
     | 'findRaw'
     | 'groupBy'
-
-  /**
-   * These options are being passed into the middleware as "params"
-   */
-  export type MiddlewareParams = {
-    model?: ModelName
-    action: PrismaAction
-    args: any
-    dataPath: string[]
-    runInTransaction: boolean
-  }
-
-  /**
-   * The `T` type makes sure, that the `return proceed` is not forgotten in the middleware implementation
-   */
-  export type Middleware<T = any> = (
-    params: MiddlewareParams,
-    next: (params: MiddlewareParams) => $Utils.JsPromise<T>,
-  ) => $Utils.JsPromise<T>
 
   // tested in getLogLevel.test.ts
   export function getLogLevel(log: Array<LogLevel | LogDefinition>): LogLevel | undefined;
@@ -2135,7 +2126,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Client model
-   */ 
+   */
   interface ClientFieldRefs {
     readonly id: FieldRef<"Client", 'Int'>
     readonly firstName: FieldRef<"Client", 'String'>
@@ -3230,7 +3221,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Saler model
-   */ 
+   */
   interface SalerFieldRefs {
     readonly id: FieldRef<"Saler", 'Int'>
     readonly firstName: FieldRef<"Saler", 'String'>
@@ -4361,7 +4352,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Product model
-   */ 
+   */
   interface ProductFieldRefs {
     readonly id: FieldRef<"Product", 'Int'>
     readonly name: FieldRef<"Product", 'String'>
@@ -5453,7 +5444,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Category model
-   */ 
+   */
   interface CategoryFieldRefs {
     readonly id: FieldRef<"Category", 'Int'>
     readonly name: FieldRef<"Category", 'String'>
@@ -5923,6 +5914,8 @@ export namespace Prisma {
     date: Date | null
     value: number | null
     rating: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SaleMaxAggregateOutputType = {
@@ -5933,6 +5926,8 @@ export namespace Prisma {
     date: Date | null
     value: number | null
     rating: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SaleCountAggregateOutputType = {
@@ -5943,6 +5938,8 @@ export namespace Prisma {
     date: number
     value: number
     rating: number
+    createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -5973,6 +5970,8 @@ export namespace Prisma {
     date?: true
     value?: true
     rating?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type SaleMaxAggregateInputType = {
@@ -5983,6 +5982,8 @@ export namespace Prisma {
     date?: true
     value?: true
     rating?: true
+    createdAt?: true
+    updatedAt?: true
   }
 
   export type SaleCountAggregateInputType = {
@@ -5993,6 +5994,8 @@ export namespace Prisma {
     date?: true
     value?: true
     rating?: true
+    createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -6090,6 +6093,8 @@ export namespace Prisma {
     date: Date
     value: number
     rating: number | null
+    createdAt: Date
+    updatedAt: Date
     _count: SaleCountAggregateOutputType | null
     _avg: SaleAvgAggregateOutputType | null
     _sum: SaleSumAggregateOutputType | null
@@ -6119,6 +6124,8 @@ export namespace Prisma {
     date?: boolean
     value?: boolean
     rating?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     Client?: boolean | ClientDefaultArgs<ExtArgs>
     Product?: boolean | ProductDefaultArgs<ExtArgs>
     Saler?: boolean | SalerDefaultArgs<ExtArgs>
@@ -6132,6 +6139,8 @@ export namespace Prisma {
     date?: boolean
     value?: boolean
     rating?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     Client?: boolean | ClientDefaultArgs<ExtArgs>
     Product?: boolean | ProductDefaultArgs<ExtArgs>
     Saler?: boolean | SalerDefaultArgs<ExtArgs>
@@ -6145,6 +6154,8 @@ export namespace Prisma {
     date?: boolean
     value?: boolean
     rating?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
     Client?: boolean | ClientDefaultArgs<ExtArgs>
     Product?: boolean | ProductDefaultArgs<ExtArgs>
     Saler?: boolean | SalerDefaultArgs<ExtArgs>
@@ -6158,9 +6169,11 @@ export namespace Prisma {
     date?: boolean
     value?: boolean
     rating?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type SaleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "productId" | "salerId" | "date" | "value" | "rating", ExtArgs["result"]["sale"]>
+  export type SaleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "clientId" | "productId" | "salerId" | "date" | "value" | "rating" | "createdAt" | "updatedAt", ExtArgs["result"]["sale"]>
   export type SaleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     Client?: boolean | ClientDefaultArgs<ExtArgs>
     Product?: boolean | ProductDefaultArgs<ExtArgs>
@@ -6192,6 +6205,8 @@ export namespace Prisma {
       date: Date
       value: number
       rating: number | null
+      createdAt: Date
+      updatedAt: Date
     }, ExtArgs["result"]["sale"]>
     composites: {}
   }
@@ -6616,7 +6631,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Sale model
-   */ 
+   */
   interface SaleFieldRefs {
     readonly id: FieldRef<"Sale", 'Int'>
     readonly clientId: FieldRef<"Sale", 'Int'>
@@ -6625,6 +6640,8 @@ export namespace Prisma {
     readonly date: FieldRef<"Sale", 'DateTime'>
     readonly value: FieldRef<"Sale", 'Float'>
     readonly rating: FieldRef<"Sale", 'Int'>
+    readonly createdAt: FieldRef<"Sale", 'DateTime'>
+    readonly updatedAt: FieldRef<"Sale", 'DateTime'>
   }
     
 
@@ -7708,7 +7725,7 @@ export namespace Prisma {
 
   /**
    * Fields of the Goal model
-   */ 
+   */
   interface GoalFieldRefs {
     readonly year: FieldRef<"Goal", 'Int'>
     readonly month: FieldRef<"Goal", 'Int'>
@@ -8184,7 +8201,9 @@ export namespace Prisma {
     salerId: 'salerId',
     date: 'date',
     value: 'value',
-    rating: 'rating'
+    rating: 'rating',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type SaleScalarFieldEnum = (typeof SaleScalarFieldEnum)[keyof typeof SaleScalarFieldEnum]
@@ -8217,7 +8236,7 @@ export namespace Prisma {
 
 
   /**
-   * Field references 
+   * Field references
    */
 
 
@@ -8477,6 +8496,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Sale"> | Date | string
     value?: FloatFilter<"Sale"> | number
     rating?: IntNullableFilter<"Sale"> | number | null
+    createdAt?: DateTimeFilter<"Sale"> | Date | string
+    updatedAt?: DateTimeFilter<"Sale"> | Date | string
     Client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     Product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     Saler?: XOR<SalerScalarRelationFilter, SalerWhereInput>
@@ -8490,6 +8511,8 @@ export namespace Prisma {
     date?: SortOrder
     value?: SortOrder
     rating?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     Client?: ClientOrderByWithRelationInput
     Product?: ProductOrderByWithRelationInput
     Saler?: SalerOrderByWithRelationInput
@@ -8506,6 +8529,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Sale"> | Date | string
     value?: FloatFilter<"Sale"> | number
     rating?: IntNullableFilter<"Sale"> | number | null
+    createdAt?: DateTimeFilter<"Sale"> | Date | string
+    updatedAt?: DateTimeFilter<"Sale"> | Date | string
     Client?: XOR<ClientScalarRelationFilter, ClientWhereInput>
     Product?: XOR<ProductScalarRelationFilter, ProductWhereInput>
     Saler?: XOR<SalerScalarRelationFilter, SalerWhereInput>
@@ -8519,6 +8544,8 @@ export namespace Prisma {
     date?: SortOrder
     value?: SortOrder
     rating?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: SaleCountOrderByAggregateInput
     _avg?: SaleAvgOrderByAggregateInput
     _max?: SaleMaxOrderByAggregateInput
@@ -8537,6 +8564,8 @@ export namespace Prisma {
     date?: DateTimeWithAggregatesFilter<"Sale"> | Date | string
     value?: FloatWithAggregatesFilter<"Sale"> | number
     rating?: IntNullableWithAggregatesFilter<"Sale"> | number | null
+    createdAt?: DateTimeWithAggregatesFilter<"Sale"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Sale"> | Date | string
   }
 
   export type GoalWhereInput = {
@@ -8799,6 +8828,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     Client: ClientCreateNestedOneWithoutSaleInput
     Product: ProductCreateNestedOneWithoutSaleInput
     Saler: SalerCreateNestedOneWithoutSaleInput
@@ -8812,12 +8843,16 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleUpdateInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Client?: ClientUpdateOneRequiredWithoutSaleNestedInput
     Product?: ProductUpdateOneRequiredWithoutSaleNestedInput
     Saler?: SalerUpdateOneRequiredWithoutSaleNestedInput
@@ -8831,6 +8866,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleCreateManyInput = {
@@ -8841,12 +8878,16 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleUpdateManyMutationInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleUncheckedUpdateManyInput = {
@@ -8857,6 +8898,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GoalCreateInput = {
@@ -9244,6 +9287,8 @@ export namespace Prisma {
     date?: SortOrder
     value?: SortOrder
     rating?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SaleAvgOrderByAggregateInput = {
@@ -9263,6 +9308,8 @@ export namespace Prisma {
     date?: SortOrder
     value?: SortOrder
     rating?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SaleMinOrderByAggregateInput = {
@@ -9273,6 +9320,8 @@ export namespace Prisma {
     date?: SortOrder
     value?: SortOrder
     rating?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SaleSumOrderByAggregateInput = {
@@ -9840,6 +9889,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     Product: ProductCreateNestedOneWithoutSaleInput
     Saler: SalerCreateNestedOneWithoutSaleInput
   }
@@ -9851,6 +9902,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleCreateOrConnectWithoutClientInput = {
@@ -9889,6 +9942,8 @@ export namespace Prisma {
     date?: DateTimeFilter<"Sale"> | Date | string
     value?: FloatFilter<"Sale"> | number
     rating?: IntNullableFilter<"Sale"> | number | null
+    createdAt?: DateTimeFilter<"Sale"> | Date | string
+    updatedAt?: DateTimeFilter<"Sale"> | Date | string
   }
 
   export type GoalCreateWithoutSalerInput = {
@@ -9916,6 +9971,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     Client: ClientCreateNestedOneWithoutSaleInput
     Product: ProductCreateNestedOneWithoutSaleInput
   }
@@ -9927,6 +9984,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleCreateOrConnectWithoutSalerInput = {
@@ -9998,6 +10057,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
     Client: ClientCreateNestedOneWithoutSaleInput
     Saler: SalerCreateNestedOneWithoutSaleInput
   }
@@ -10009,6 +10070,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleCreateOrConnectWithoutProductInput = {
@@ -10295,12 +10358,16 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleUpdateWithoutClientInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Product?: ProductUpdateOneRequiredWithoutSaleNestedInput
     Saler?: SalerUpdateOneRequiredWithoutSaleNestedInput
   }
@@ -10312,6 +10379,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleUncheckedUpdateManyWithoutClientInput = {
@@ -10321,6 +10390,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GoalCreateManySalerInput = {
@@ -10336,6 +10407,8 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type GoalUpdateWithoutSalerInput = {
@@ -10360,6 +10433,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Client?: ClientUpdateOneRequiredWithoutSaleNestedInput
     Product?: ProductUpdateOneRequiredWithoutSaleNestedInput
   }
@@ -10371,6 +10446,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleUncheckedUpdateManyWithoutSalerInput = {
@@ -10380,6 +10457,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleCreateManyProductInput = {
@@ -10389,12 +10468,16 @@ export namespace Prisma {
     date: Date | string
     value: number
     rating?: number | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SaleUpdateWithoutProductInput = {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     Client?: ClientUpdateOneRequiredWithoutSaleNestedInput
     Saler?: SalerUpdateOneRequiredWithoutSaleNestedInput
   }
@@ -10406,6 +10489,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SaleUncheckedUpdateManyWithoutProductInput = {
@@ -10415,6 +10500,8 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     value?: FloatFieldUpdateOperationsInput | number
     rating?: NullableIntFieldUpdateOperationsInput | number | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProductCreateManyCategoryInput = {

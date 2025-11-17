@@ -1,15 +1,10 @@
-import Fastify from "fastify";
-import { dashboardRoutes } from "./routes/dashboard";
-import { salesRoutes } from "./routes/sales";
-import { metricsRoutes } from "./routes/metricsRouter";
-import { clientsRoutes } from "./routes/clients";
-import { productsRoutes } from "./routes/products";
-import { salersRoutes } from "./routes/salers";
-import type { ZodTypeProvider } from "fastify-type-provider-zod";
-import {
-  serializerCompiler,
-  validatorCompiler,
-} from "fastify-type-provider-zod";
+import Fastify from 'fastify';
+import { dashboardRoutes } from './routes/dashboard';
+import { salesRoutes } from './routes/sales';
+import { metricsRoutes } from './routes/metricsRouter';
+import { clientsRoutes } from './routes/clients';
+import { productsRoutes } from './routes/products';
+import { salersRoutes } from './routes/salers';
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3333;
 
@@ -26,7 +21,7 @@ async function bootstrap() {
   await fastify.register(salersRoutes);
   await fastify.register(salesRoutes);
 
-  await fastify.listen({ port, host: "0.0.0.0" });
+  await fastify.listen({ port, host: '0.0.0.0' });
 }
 
 bootstrap();

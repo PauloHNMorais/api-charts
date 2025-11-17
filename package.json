@@ -1,37 +1,42 @@
 {
-    "name": "api_charts",
-    "version": "1.0.0",
-    "main": "index.js",
-    "scripts": {
-        "dev": "tsx watch src/server.ts",
-        "test": "jest",
-        "test:watch": "yarn test -- --watch",
-        "prisma:studio": "npx prisma studio",
-        "prisma:migrate-dev": "npx prisma migrate dev",
-        "prisma:generate": "npx prisma generate",
-        "prisma:seed": "npx prisma db seed",
-        "prisma:pull": "npx prisma db pull"
-    },
-    "prisma": {
-        "seed": "tsx prisma/seed.ts"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "description": "",
-    "devDependencies": {
-        "@types/lodash": "^4.17.16",
-        "@types/node": "^22.13.14",
-        "prisma": "^6.16.2",
-        "tsx": "^4.19.3",
-        "typescript": "^5.8.2"
-    },
-    "dependencies": {
-        "@fastify/cors": "^11.0.1",
-        "@prisma/client": "^6.16.2",
-        "dayjs": "^1.11.13",
-        "fastify": "^5.2.2",
-        "lodash": "^4.17.21",
-        "zod": "^3.24.2"
-    }
+  "name": "api_charts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "test": "jest",
+    "test:watch": "yarn test -- --watch",
+    "prisma:studio": "npx prisma studio",
+    "prisma:migrate-dev": "npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate",
+    "prisma:seed": "npx prisma db seed",
+    "prisma:pull": "npx prisma db pull",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "prisma:migrate-prod": "npx prisma migrate deploy",
+    "setup:prod": "yarn build && yarn prisma:migrate-prod && yarn prisma:seed",
+    "prod": "yarn setup:prod && yarn start"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.13.14",
+    "prisma": "^6.16.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.0.1",
+    "@prisma/client": "^6.16.2",
+    "dayjs": "^1.11.13",
+    "fastify": "^5.2.2",
+    "lodash": "^4.17.21",
+    "zod": "^3.24.2"
+  }
 }

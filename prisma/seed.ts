@@ -1,5 +1,5 @@
-import { PrismaClient } from "../generated/prisma";
-import data from "./mock/data.json";
+import { PrismaClient } from '../generated/prisma';
+import data from './mock/data.json';
 
 function randomIntFromInterval(min: number, max: number) {
   // min and max included
