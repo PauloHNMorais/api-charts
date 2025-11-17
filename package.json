@@ -12,7 +12,7 @@
     "prisma:seed": "npx prisma db seed",
     "prisma:pull": "npx prisma db pull",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "ts-node -r tsconfig-paths/register dist/src/server",
     "prisma:migrate-prod": "npx prisma migrate deploy",
     "setup:prod": "yarn build && yarn prisma:migrate-prod && yarn prisma:seed",
     "prod": "yarn setup:prod && yarn start"
@@ -37,6 +37,7 @@
     "dayjs": "^1.11.13",
     "fastify": "^5.2.2",
     "lodash": "^4.17.21",
+    "ts-node": "^10.9.2",
     "zod": "^3.24.2"
   }
 }
