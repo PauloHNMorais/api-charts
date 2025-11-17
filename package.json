@@ -1,9 +1,9 @@
 {
   "name": "api_charts",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch index.ts",
     "test": "jest",
     "test:watch": "yarn test -- --watch",
     "prisma:studio": "npx prisma studio",
