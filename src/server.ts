@@ -20,7 +20,6 @@ async function bootstrap() {
   await fastify.register(productsRoutes);
   await fastify.register(salersRoutes);
   await fastify.register(salesRoutes);
-
   await fastify.listen({ port, host: '0.0.0.0' });
 }
 
