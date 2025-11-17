@@ -1,10 +1,10 @@
 import Fastify from 'fastify';
-import { dashboardRoutes } from './routes/dashboard';
-import { salesRoutes } from './routes/sales';
-import { metricsRoutes } from './routes/metricsRouter';
-import { clientsRoutes } from './routes/clients';
-import { productsRoutes } from './routes/products';
-import { salersRoutes } from './routes/salers';
+import { clientsRoutes } from './src/routes/clients';
+import { dashboardRoutes } from './src/routes/dashboard';
+import { metricsRoutes } from './src/routes/metricsRouter';
+import { productsRoutes } from './src/routes/products';
+import { salersRoutes } from './src/routes/salers';
+import { salesRoutes } from './src/routes/sales';
 
 const port = process.env.PORT ? Number(process.env.PORT) : 3333;
 
