@@ -11,7 +11,7 @@
     "prisma:generate": "npx prisma generate",
     "prisma:seed": "npx prisma db seed",
     "prisma:pull": "npx prisma db pull",
-    "build": "tsc && yarn prisma:migrate-prod && yarn prisma:seed",
+    "build": "tsc && yarn prisma:generate && yarn prisma:migrate-prod && yarn prisma:seed",
     "start": "ts-node -r tsconfig-paths/register dist/index",
     "prisma:migrate-prod": "npx prisma migrate deploy"
   },
