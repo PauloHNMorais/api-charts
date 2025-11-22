@@ -11,9 +11,11 @@
     "prisma:generate": "npx prisma generate",
     "prisma:seed": "npx prisma db seed",
     "prisma:pull": "npx prisma db pull",
-    "build": "tsc && yarn prisma:generate && yarn prisma:migrate-prod && yarn prisma:seed",
+    "build": "tsc",
     "start": "ts-node -r tsconfig-paths/register dist/index",
-    "prisma:migrate-prod": "npx prisma migrate deploy"
+    "prisma:migrate-prod": "npx prisma migrate deploy",
+    "setup:prod": "yarn build && yarn prisma:migrate-prod && yarn prisma:seed",
+    "prod": "yarn setup:prod && yarn start"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -36,7 +38,6 @@
     "fastify": "^5.2.2",
     "lodash": "^4.17.21",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.2"
   }
 }
