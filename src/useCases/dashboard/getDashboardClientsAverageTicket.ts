@@ -1,6 +1,5 @@
-import dayjs from 'dayjs';
-import lodash from 'lodash';
-import { prisma } from '../../lib/prisma';
+import { prisma } from "@/src/lib/prisma";
+import dayjs from "dayjs";
 
 export class GetDashboardClientsAverageTicketUseCase {
   static async execute(startDate: Date, endDate: Date) {
@@ -13,7 +12,7 @@ export class GetDashboardClientsAverageTicketUseCase {
           },
         },
         orderBy: {
-          date: 'desc',
+          date: "desc",
         },
       }),
     ]);
@@ -26,7 +25,7 @@ export class GetDashboardClientsAverageTicketUseCase {
       const data = new Date(venda.date);
       const anoMes = `${data.getFullYear()}-${(data.getMonth() + 1)
         .toString()
-        .padStart(2, '0')}`;
+        .padStart(2, "0")}`;
 
       if (!vendasAgrupadas[anoMes]) {
         vendasAgrupadas[anoMes] = { soma: 0, quantidade: 0 };
@@ -42,7 +41,7 @@ export class GetDashboardClientsAverageTicketUseCase {
       const average =
         vendasAgrupadas[date].soma / vendasAgrupadas[date].quantidade;
       resultado.push({
-        date: dayjs(date).format('MMM/YY'),
+        date: dayjs(date).format("MMM/YY"),
         average: Number(average.toFixed(2)),
       });
     }

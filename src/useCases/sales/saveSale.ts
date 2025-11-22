@@ -1,5 +1,5 @@
+import { prisma } from "@/src/lib/prisma";
 import { z } from "zod";
-import { prisma } from "../../lib/prisma";
 
 export class SaveSaleUseCase {
   static async execute(params: any) {

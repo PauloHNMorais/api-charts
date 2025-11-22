@@ -1,5 +1,5 @@
+import { prisma } from "@/src/lib/prisma";
 import dayjs from "dayjs";
-import { prisma } from "../../lib/prisma";
 
 export class GetSalesUseCase {
   static async execute() {

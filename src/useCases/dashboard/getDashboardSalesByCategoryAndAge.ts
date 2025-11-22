@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
-import lodash from 'lodash';
-import { prisma } from '../../lib/prisma';
+import { prisma } from "@/src/lib/prisma";
+import dayjs from "dayjs";
+import lodash from "lodash";
 
 export class GetDashboardSalesByCategoryAndAgeUseCase {
   static async execute(startDate: Date, endDate: Date) {
@@ -21,7 +21,7 @@ export class GetDashboardSalesByCategoryAndAgeUseCase {
           },
         },
         orderBy: {
-          value: 'desc',
+          value: "desc",
         },
       }),
     ]);
@@ -36,40 +36,40 @@ export class GetDashboardSalesByCategoryAndAgeUseCase {
     Object.entries(categoryGroup).forEach(([categoryId, sales]) => {
       const ageGroup = lodash.groupBy(sales, (sale) => {
         const age = Math.ceil(
-          dayjs().diff(sale.Client.birthDate, 'years', true)
+          dayjs().diff(sale.Client.birthDate, "years", true)
         );
         if (age <= 17) {
-          return 'Até 17 anos';
+          return "Até 17 anos";
         } else if (age >= 18 && age <= 29) {
-          return 'Entre 18 e 29 anos';
+          return "Entre 18 e 29 anos";
         } else if (age >= 30 && age <= 44) {
-          return 'Entre 30 e 44 anos';
+          return "Entre 30 e 44 anos";
         } else if (age >= 45 && age <= 59) {
-          return 'Entre 45 e 59 anos';
+          return "Entre 45 e 59 anos";
         } else {
-          return '60 anos ou mais';
+          return "60 anos ou mais";
         }
       });
 
       const agesGroup = {
-        'Até 17 anos': lodash.sumBy(
-          ageGroup['Até 17 anos'],
+        "Até 17 anos": lodash.sumBy(
+          ageGroup["Até 17 anos"],
           (sale) => sale.value
         ),
-        'Entre 18 e 29 anos': lodash.sumBy(
-          ageGroup['Entre 18 e 29 anos'],
+        "Entre 18 e 29 anos": lodash.sumBy(
+          ageGroup["Entre 18 e 29 anos"],
           (sale) => sale.value
         ),
-        'Entre 30 e 44 anos': lodash.sumBy(
-          ageGroup['Entre 30 e 44 anos'],
+        "Entre 30 e 44 anos": lodash.sumBy(
+          ageGroup["Entre 30 e 44 anos"],
           (sale) => sale.value
         ),
-        'Entre 45 e 59 anos': lodash.sumBy(
-          ageGroup['Entre 45 e 59 anos'],
+        "Entre 45 e 59 anos": lodash.sumBy(
+          ageGroup["Entre 45 e 59 anos"],
           (sale) => sale.value
         ),
-        '60 anos ou mais': lodash.sumBy(
-          ageGroup['60 anos ou mais'],
+        "60 anos ou mais": lodash.sumBy(
+          ageGroup["60 anos ou mais"],
           (sale) => sale.value
         ),
       };

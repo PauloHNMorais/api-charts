@@ -1,11 +1,11 @@
-import dayjs from 'dayjs';
-import { prisma } from '../../lib/prisma';
+import { prisma } from "@/src/lib/prisma";
+import dayjs from "dayjs";
 
 export class GetDashboardSalesBySalerUseCase {
   static async execute(startDate: Date, endDate: Date) {
     const [sales, salers] = await Promise.all([
       prisma.sale.groupBy({
-        by: ['salerId'],
+        by: ["salerId"],
         where: {
           date: {
             gte: startDate,
@@ -17,7 +17,7 @@ export class GetDashboardSalesBySalerUseCase {
         },
         orderBy: {
           _sum: {
-            value: 'desc',
+            value: "desc",
           },
         },
       }),

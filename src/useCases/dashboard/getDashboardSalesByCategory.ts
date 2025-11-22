@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
-import { prisma } from '../../lib/prisma';
+import { prisma } from "@/src/lib/prisma";
+import dayjs from "dayjs";
 
 export class GetDashboardSalesByCategoryUseCase {
   static async execute(startDate: Date, endDate: Date) {
@@ -12,7 +12,7 @@ export class GetDashboardSalesByCategoryUseCase {
           },
         },
         orderBy: {
-          date: 'desc',
+          date: "desc",
         },
         include: {
           Product: {
@@ -27,7 +27,7 @@ export class GetDashboardSalesByCategoryUseCase {
     const data = [] as any[];
 
     const groupedSales = sales.reduce((acc: any, sale) => {
-      const key = sale.Product.categoryId?.toString() || '0'; // Formato "YYYY-MM"
+      const key = sale.Product.categoryId?.toString() || "0"; // Formato "YYYY-MM"
 
       if (!acc[key]) {
         acc[key] = {
