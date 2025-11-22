@@ -45,7 +45,7 @@ async function bootstrap() {
   });
 
   // await fastify.register(cors, { origin: true });
-  fastify.addHook("preHandler", authenticate);
+  // fastify.addHook("preHandler", authenticate);
   await fastify.register(clientsRoutes);
   await fastify.register(dashboardRoutes);
   await fastify.register(metricsRoutes);
